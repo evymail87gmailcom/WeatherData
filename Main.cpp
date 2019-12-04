@@ -1,260 +1,12 @@
 #include<chrono>
+#include"WeatherHeader.h"
 #include<string>
 #include<iostream>
 #include<fstream>
 #include<vector>
 
-
-
 using namespace std;
-
 typedef std::chrono::high_resolution_clock Clock;
-
-struct WeatherData {
-	string date = "";
-	float inDoorAverageTemp;
-	float outDoorAverageTemp;
-
-	int moltIndexIn;
-	int moltIndexOut;
-
-	float inDoorAverageHum;
-	float outDoorAverageHum;
-
-	float minIndoorAverageTemp;
-	float minOutdoorAverageTemp;
-	float maxIndoorAverageTemp;
-	float maxOutdoorAverageTemp;
-
-	float minIndoorAverageHum;
-	float minOutdoorAverageHum;
-	float maxIndoorAverageHum;
-	float maxOutdoorAverageHum;
-};
-
-//För att byta värde på två minnesplatser
-void swap(WeatherData* xp, WeatherData* yp)
-{
-	WeatherData temp = *xp;
-	*xp = *yp;
-	*yp = temp;
-}
-void printVector(vector<WeatherData>& weather, int size)
-{
-	int i;
-	for (i = 0; i < size; i++)
-		cout << &weather[i] << " ";
-	cout << endl;
-}
-
-//Sökfunktion
-int search(vector<WeatherData>& weather, string x) {
-
-	for (auto i = 0; i < weather.size(); i++)
-	{
-		if (weather[i].date == x) {
-			return i;
-
-		}
-
-	}
-	return -1;
-}
-
-
-
-
-//Skriver ut lägst till högst datum.
-void bubbleSortDateLowToHigh(vector <WeatherData>& weather, int n)
-{
-
-
-	int i, j;
-	for (i = 0; i < n - 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].date > weather[j + 1].date)
-				swap(&weather[j], &weather[j + 1]);
-}
-
-
-//Skriver ut från högst datum till lägst
-void bubbleSortDateHighToLow(vector <WeatherData>& weather, int n)
-{
-	int i, j;
-	for (i = 0; i < n + 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].date < weather[j + 1].date)
-				swap(&weather[j], &weather[j + 1]);
-}
-
-//Sorterar från varmaste till kallaste dagen INOMHUS
-void bubbleSortIndoorAverageTempHotToCold(vector <WeatherData>& weather, int n)
-{
-
-	int i, j;
-	for (i = 0; i < n - 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].inDoorAverageTemp < weather[j + 1].inDoorAverageTemp)
-				swap(&weather[j], &weather[j + 1]);
-}
-
-//Sorterar från kallaste till varmaste dagen INOMHUS
-void bubbleSortIndoorAverageTempColdToHot(vector <WeatherData>& weather, int n)
-{
-
-	int i, j;
-	for (i = 0; i < n - 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].inDoorAverageTemp > weather[j + 1].inDoorAverageTemp)
-				swap(&weather[j], &weather[j + 1]);
-}
-
-//Sorterar från varmaste till kallaste dagen UTOMHUS
-void bubbleSortOutdoorAverageTempHotToCold(vector <WeatherData>& weather, int n)
-{
-
-	int i, j;
-	for (i = 0; i < n - 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].outDoorAverageTemp < weather[j + 1].outDoorAverageTemp)
-				swap(&weather[j], &weather[j + 1]);
-}
-
-//Sorterar från kallaste till varmaste dagen UTOMHUS
-void bubbleSortOutdoorAverageTempColdToHot(vector <WeatherData>& weather, int n)
-{
-
-	int i, j;
-	for (i = 0; i < n - 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].outDoorAverageTemp > weather[j + 1].outDoorAverageTemp)
-				swap(&weather[j], &weather[j + 1]);
-}
-
-//Sorterar från den torraste dagen till den fuktigaste dagen INOMHUS
-void bubbleSortIndoorAverageHumDryToMoist(vector <WeatherData>& weather, int n)
-{
-
-	int i, j;
-	for (i = 0; i < n - 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].inDoorAverageHum > weather[j + 1].inDoorAverageHum)
-				swap(&weather[j], &weather[j + 1]);
-}
-
-
-
-//Sorterar från den fuktigaste dagen till den torraste dagen INOMHUS
-void bubbleSortIndoorAverageHumMoistToDry(vector <WeatherData>& weather, int n)
-{
-
-	int i, j;
-	for (i = 0; i < n - 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].inDoorAverageHum < weather[j + 1].inDoorAverageHum)
-				swap(&weather[j], &weather[j + 1]);
-}
-
-//Sorterar från den torraste dagen till den fuktigaste dagen UTOMHUS
-void bubbleSortOutdoorAverageHumDryToMoist(vector <WeatherData>& weather, int n)
-{
-
-	int i, j;
-	for (i = 0; i < n - 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].outDoorAverageHum > weather[j + 1].outDoorAverageHum)
-				swap(&weather[j], &weather[j + 1]);
-}
-
-
-//Sorterar från den fuktigaste dagen till den torraste dagen UTOMHUS
-void bubbleSortOutdoorAverageHumMoistToDry(vector <WeatherData>& weather, int n)
-{
-
-	int i, j;
-	for (i = 0; i < n - 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].outDoorAverageHum < weather[j + 1].outDoorAverageHum)
-				swap(&weather[j], &weather[j + 1]);
-}
-
-//Sorterar från minst mögelrisk till mest mögelrisk INOMHUS
-void bubbleSortIndoorAverageMoltIndexLowToHigh(vector <WeatherData>& weather, int n)
-{
-
-	int i, j;
-	for (i = 0; i < n - 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].moltIndexIn > weather[j + 1].moltIndexIn)
-				swap(&weather[j], &weather[j + 1]);
-}
-
-
-
-//Sorterar från mest mögelrisk till minst mögelrisk INOMHUS
-void bubbleSortIndoorAverageMoltIndexHighToLow(vector <WeatherData>& weather, int n)
-{
-
-	int i, j;
-	for (i = 0; i < n - 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].moltIndexIn < weather[j + 1].moltIndexIn)
-				swap(&weather[j], &weather[j + 1]);
-}
-//Sorterar från minst mögelrisk till mest mögelrisk UTOMHUS
-void bubbleSortOutdoorAverageMoltIndexLowToHigh(vector <WeatherData>& weather, int n)
-{
-
-	int i, j;
-	for (i = 0; i < n - 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].moltIndexOut > weather[j + 1].moltIndexOut)
-				swap(&weather[j], &weather[j + 1]);
-}
-
-
-
-//Sorterar från mest mögelrisk till minst mögelrisk UTOMHUS
-void bubbleSortOutdoorAverageMoltIndexHighToLow(vector <WeatherData>& weather, int n)
-{
-
-	int i, j;
-	for (i = 0; i < n - 1; i++)
-
-		// Last i elements are already in place  
-		for (j = 0; j < n - i - 1; j++)
-			if (weather[j].moltIndexOut < weather[j + 1].moltIndexOut)
-				swap(&weather[j], &weather[j + 1]);
-}
-
-
-
 
 int main() {
 
@@ -264,12 +16,11 @@ int main() {
 
 	string currentDate = "";
 	string	checkDate = "";
-
-	int sizeIn;
-	int sizeOut;
 	int countIn = 0;
 	int countOut = 0;
 	int countTotal = 0;
+	int timeIn = 0;
+	int timeOut = 0;
 	float tempInSum = 0;
 	float tempOutSum = 0;
 	float humInSum = 0;
@@ -279,22 +30,22 @@ int main() {
 	struct WeatherData in;
 	struct WeatherData out;
 	string input = "";
-
-
-
-
+	float temporaryIn = 0;
+	float humTemporaryIn = 0;
+	float temporaryOut = 0;
+	float humTemporaryOut = 0;
+	float tempIn;
+	float humIn;
+	float tempOut;
+	float humOut;
 
 	string inFileName = "tempdata4long.txt";
-
 	ifstream inFile;
-
 	inFile.open(inFileName);
 
 
 	if (inFile.is_open()) {
 
-
-		//whileloopen ser till att filen fortsätter rad för rad.
 		while (inFile) {
 			getline(inFile, day, ' ');
 			dates = day.substr(0, 4) + day.substr(5, 2) + day.substr(8, 2);
@@ -305,20 +56,47 @@ int main() {
 			inFile >> ws;
 
 			//Här räknas allt ut som sedan skall in i vectorn
-			////////////////////////////////////////////////////////////////////////////////
 			if (dates == checkDate) {
 				if (inOut == "Inne") {
+					int timeC = 0;
 					tempInSum += stof(temperature);
 					humInSum += stof(humidity);
+					tempIn = stof(temperature);
+					humIn = stof(humidity);
+					
+					//Om temp är sjunkande och hum är stigande så är balkongen inne kanske öppen. detta kollas sen mot utomhusvärden om de är stigande
+					if (tempIn < temporaryIn && humIn>humTemporaryIn) 
+					{
+							in.balconyIn = true;
+					}
+					else
+					{
+						in.balconyIn = false;
+					}
+					temporaryIn = tempIn;
+					humTemporaryIn = humIn;
 					currentDate = dates;
 					countIn++;
 				}
-				else {
+				else 
+				{
 					tempOutSum += stof(temperature);
 					humOutSum += stof(humidity);
+					tempOut = stof(temperature);
+					humOut = stof(humidity);
+
+					if (tempOut > temporaryOut && humOut<humTemporaryOut)
+					{
+						out.balconyOut = true;
+					}
+					else
+					{
+						out.balconyOut = false;
+					}
+					temporaryOut = tempOut;
+					humTemporaryOut = humOut;
 					currentDate = dates;
 					countOut++;
-
 				}
 				countTotal++;
 			}
@@ -329,20 +107,32 @@ int main() {
 					in.date = currentDate;
 					in.inDoorAverageTemp = (tempInSum / countIn);
 					in.inDoorAverageHum = (humInSum / countIn);
-
-					if ((in.inDoorAverageTemp >= 15 && in.inDoorAverageTemp < 50) && in.inDoorAverageHum > 78.15) {
+					
+					if ((in.inDoorAverageTemp >= 15 && in.inDoorAverageTemp < 50) && in.inDoorAverageHum > 78.15)
+					{
 						in.moltIndexIn = 1;
 					}
-					else if ((in.inDoorAverageTemp >= 0 && in.inDoorAverageTemp < 15) && in.inDoorAverageHum > 78.15) {
+					else if ((in.inDoorAverageTemp >= 0 && in.inDoorAverageTemp < 15) && in.inDoorAverageHum > 78.15)
+					{
 						in.moltIndexIn = 2;
 					}
 					else in.moltIndexIn = 3;
 
 					weatherIn.push_back(in);
-
 					out.date = currentDate;
 					out.outDoorAverageTemp = (tempOutSum / countOut);
 					out.outDoorAverageHum = (humOutSum / countOut);
+					
+					if (in.balconyIn == true && out.balconyOut == true) 
+					{
+						in.balconyDoor = "open";
+						out.balconyDoor = "open";
+					}
+					else 
+					{ 
+						in.balconyDoor = "closed"; 
+						out.balconyDoor = "closed";
+					}
 					if ((out.outDoorAverageTemp >= 15 && out.outDoorAverageTemp < 50) && out.outDoorAverageHum > 78.15) {
 						out.moltIndexOut = 1;
 					}
@@ -352,245 +142,126 @@ int main() {
 					else out.moltIndexOut = 3;
 
 					weatherOut.push_back(out);
-
 					tempInSum = 0;
 					tempOutSum = 0;
 					humInSum = 0;
 					humOutSum = 0;
-
 					countIn = 0;
 					countOut = 0;
 					countTotal = 0;
-
-
-
 				}
 			}
-
 			if (!inFile)
 			{
 				break;
 			}
-
 		}
 
-
-
-
-
-		sizeIn = weatherIn.size();
-		sizeOut = weatherOut.size();
-
-
-
 		do {
+			
 
-			cout << "Enter 1 to search for specifik date" << endl;
-			cout << "Enter 2 for the 5 warmest days, indoor" << endl;
-			cout << "Enter 3 for the 5 coldest days, indoor" << endl;
-			cout << "Enter 4 to get the 5 warmest days, outdoor " << endl;
-			cout << "Enter 5 for the 5 coldest days, outdoor" << endl;
-			cout << "Enter 6 for the 5 driest days, indoor " << endl;
-			cout << "Enter 7 for the 5 days with the highest humidity, indoor " << endl;
-			cout << "Enter 8 for the 5 driest days, outdoor " << endl;
-			cout << "Enter 9 for the 5 days with the highest humidity, outdoor" << endl;
-			cout << "Enter 10 for the 5 days with lesser risk of molt, indoor " << endl;
-			cout << "Enter 11 for the 5 days with high risk of molt, indoor" << endl;
-			cout << "Enter 12 for the 5 days with low risk of molt, outdoor " << endl;
-			cout << "Enter 13 for the 5 days with high risk of molt, outdoor " << endl;
-			cout << "Enter 14 for Winter " << endl;
-			cout << "Enter 15 for Fall" << endl;
-			cout << endl;
-
+			printMenu();
 			getline(cin, input);
 			cout << endl;
 			int inputCase = stoi(input);
-
+			system("cls");
 			switch (inputCase)
 			{
 
 			case 1:
 			{
 				//SÖKER EFTER DATUM
-				////////////////////////////////////////////////////////////////////////////////
 				cout << "Enter SearchDate with format 'yyyymmdd': " << endl;
 				getline(cin, searchDate);
+				cout<<"\n";
 				int c = search(weatherIn, searchDate);
 				int k = search(weatherOut, searchDate);
 
-				cout << "Temperature, AirHumidity and risk of molt indoor: " << endl;
-				cout << weatherIn[c].date << "   " << weatherIn[c].inDoorAverageTemp << " " << weatherIn[c].inDoorAverageHum << " " << weatherIn[c].moltIndexIn << endl;
+				cout << "Date,\t\tTemperature,\tHumidity\tRisk of molt indoor: " << endl;
+				cout << weatherIn[c].date << "\t" << weatherIn[c].inDoorAverageTemp << "\t\t" << weatherIn[c].inDoorAverageHum << "\t\t" << weatherIn[c].moltIndexIn <<endl;
 
-				cout << "Temperature, AirHumidity and risk of molt outdoor: " << endl;
-				cout << weatherOut[k].date << "  " << weatherOut[k].outDoorAverageTemp << " " << weatherOut[k].outDoorAverageHum << " " << weatherOut[k].moltIndexOut << endl;
+				cout << "Date, \t\tTemperature,\tHumidity\tRisk of molt outdoor: " << endl;
+				cout << weatherOut[k].date << "\t" << weatherOut[k].outDoorAverageTemp << "\t\t" << weatherOut[k].outDoorAverageHum << "\t\t" << weatherOut[k].moltIndexOut <<endl;
 				break;
 			}
-
 			case 2:
 			{
-
-				//SORTERAR TEMPERATURER/DAG
-				////////////////////////////////////////////////////////////////////////////////
 				//Sortera från varmast till kallast och skriv ut de 5 varmaste dagarna INOMHUS
-				bubbleSortIndoorAverageTempHotToCold(weatherIn, sizeIn);
-				cout << "The 5 warmest days, indoor: " << endl;
-				for (int i = 0; i <= 5; i++)
-				{
-					cout << weatherIn[i].date << "  " << weatherIn[i].inDoorAverageTemp << endl;
-				}
+				bubbleSortIndoorAverageTempHotToCold(weatherIn);
 				break;
 			}
-
 			case 3:
 			{
-				//sortera från kallast till varmast och skriv ut de 5 kallaste dagarna INOMHUS
-				bubbleSortIndoorAverageTempColdToHot(weatherIn, sizeIn);
-				cout << "The 5 coldest days, indoor: " << endl;
-				for (int i = 0; i <= 5; i++)
-				{
-					cout << weatherIn[i].date << "  " << weatherIn[i].inDoorAverageTemp << endl;
-				}
+				//sortera från kallast till varmast och skriv ut de 5 kallaste dagarna INOMHUS   funktion
+				bubbleSortIndoorAverageTempColdToHot(weatherIn);
 				break;
 			}
-
 			case 4:
 			{
-				//Sortera från varmast till kallast och skriv ut de 5 varmaste dagarna UTOMHUS
-				bubbleSortOutdoorAverageTempHotToCold(weatherOut, sizeOut);
-				cout << "The 5 warmest days, outdoor: " << endl;
-				for (int i = 0; i <= 5; i++)
-				{
-					cout << weatherOut[i].date << "  " << weatherOut[i].outDoorAverageTemp << endl;
-				}
+				//Sortera från varmast till kallast och skriv ut de 5 varmaste dagarna UTOMHUS funktion
+				bubbleSortOutdoorAverageTempHotToCold(weatherOut);
 				break;
 			}
-
 			case 5:
 			{
-				//sortera från kallast till varmast och skriv ut de 5 kallaste dagarna UTOMHUS
-				bubbleSortOutdoorAverageTempColdToHot(weatherOut, sizeOut);
-				cout << "The 5 coldest days, outdoor: " << endl;
-				for (int i = 0; i <= 5; i++)
-				{
-					cout << weatherOut[i].date << " " << weatherOut[i].outDoorAverageTemp << endl;
-				}
+				//sortera från kallast till varmast och skriv ut de 5 kallaste dagarna UTOMHUS funktion
+				bubbleSortOutdoorAverageTempColdToHot(weatherOut);
 				break;
 			}
-
 			case 6:
 			{
-				//SORTERAR FUKT/DAG
-				////////////////////////////////////////////////////////////////////////////////
-
-				//Sorterar från den torraste dagen till den fuktigaste dagen INOMHUS
-				bubbleSortIndoorAverageHumDryToMoist(weatherIn, sizeIn);
-				cout << "The 5 driest days, indoor: " << endl;
-				for (int i = 0; i <= 5; i++)
-				{
-					cout << weatherIn[i].date << "  " << weatherIn[i].inDoorAverageHum << endl;
-				}
+				//Sorterar från den torraste dagen till den fuktigaste dagen INOMHUS funktion
+				bubbleSortIndoorAverageHumDryToMoist(weatherIn);
 				break;
 			}
-
 			case 7:
 			{
-				//Sorterar från den fuktigaste dagen till den torraste dagen INOMHUS
-				bubbleSortIndoorAverageHumMoistToDry(weatherIn, sizeIn);
-				cout << "The 5 days with the highest humidity, indoor: " << endl;
-				for (int i = 0; i <= 5; i++)
-				{
-					cout << weatherIn[i].date << "  " << weatherIn[i].inDoorAverageHum << endl;
-				}
+				//Sorterar från den fuktigaste dagen till den torraste dagen INOMHUS funktion
+				bubbleSortIndoorAverageHumMoistToDry(weatherIn);
 				break;
 			}
-
 			case 8:
 			{
-
-				//Sorterar från den torraste dagen till den fuktigaste dagen UTOMHUS
-				bubbleSortOutdoorAverageHumDryToMoist(weatherOut, sizeOut);
-				cout << "The 5 driest days, outdoor: " << endl;
-				for (int i = 0; i <= 5; i++)
-				{
-					cout << weatherOut[i].date << "  " << weatherOut[i].outDoorAverageHum << endl;
-				}
+				//Sorterar från den torraste dagen till den fuktigaste dagen UTOMHUS funktion
+				bubbleSortOutdoorAverageHumDryToMoist(weatherOut);	
 				break;
 			}
-
 			case 9:
 			{
-				//Sorterar från den fuktigaste dagen till den torraste dagen UTOMHUS
-				bubbleSortOutdoorAverageHumMoistToDry(weatherOut, sizeOut);
-				cout << "The 5 days with the highest humidity, outdoor: " << endl;
-				for (int i = 0; i <= 5; i++)
-				{
-					cout << weatherOut[i].date << "  " << weatherOut[i].outDoorAverageHum << endl;
-				}
+				//Sorterar från den fuktigaste dagen till den torraste dagen UTOMHUS funktion
+				bubbleSortOutdoorAverageHumMoistToDry(weatherOut);
 				break;
 			}
-
 			case 10:
 			{
-				//SKRIV UT MÖGELINDEX 
-				////////////////////////////////////////////////////////////////////////////////
-				cout << "Risk of molt: 1 = High, 2 = Mediate, 3 = Low  : " << endl;
-
 				//Sorterar från minst mögelrisk till mest mögelrisk INOMHUS
-				bubbleSortIndoorAverageMoltIndexHighToLow(weatherIn, sizeIn);
-				cout << "Days with lesser risk of molt, indoor: " << endl;
-				for (int i = 0; i <= 5; i++)
-				{
-					cout << weatherIn[i].date << "  " << weatherIn[i].moltIndexIn << endl;
-				}
-
-			}break;
-
+				bubbleSortIndoorAverageMoltIndexHighToLow(weatherIn);
+				break;
+			}
 			case 11:
 			{
-				cout << "Risk of molt: 1 = High, 2 = Mediate, 3 = Low  : " << endl;
 				//Sorterar från mest mögelrisk till minst mögelrisk INOMHUS
-				bubbleSortIndoorAverageMoltIndexLowToHigh(weatherIn, sizeIn);
-				cout << "Days with high risk of molt, indoor: " << endl;
-				for (int i = 0; i <= 5; i++)
-				{
-					cout << weatherIn[i].date << "  " << weatherIn[i].moltIndexIn << endl;
-				}
+				bubbleSortIndoorAverageMoltIndexLowToHigh(weatherIn);	
 				break;
 			}
-
 			case 12:
 			{
-				cout << "Risk of molt: 1 = High, 2 = Mediate, 3 = Low  : " << endl;
 				//Sorterar från minst mögelrisk till mest mögelrisk UTOMHUS
-				bubbleSortOutdoorAverageMoltIndexHighToLow(weatherOut, sizeOut);
-				cout << "Days with low risk of molt, outdoor: " << endl;
-				for (int i = 0; i <= 5; i++)
-				{
-					cout << weatherOut[i].date << "  " << weatherOut[i].moltIndexOut << endl;
-				}
+				bubbleSortOutdoorAverageMoltIndexHighToLow(weatherOut);	
 				break;
 			}
-
 			case 13:
 			{
-				cout << "Risk of molt: 1 = High, 2 = Mediate, 3 = Low  : " << endl;
 				//Sorterar från mest mögelrisk till minst mögelrisk UTOMHUS
-				cout << "Days with high risk of molt, outdoor: " << endl;
-				bubbleSortOutdoorAverageMoltIndexLowToHigh(weatherOut, sizeOut);
-				for (int i = 0; i <= 5; i++)
-				{
-					cout << weatherOut[i].date << "  " << weatherOut[i].moltIndexOut << endl;
-				}
+				bubbleSortOutdoorAverageMoltIndexLowToHigh(weatherOut);
 				break;
 			}
-
 			case 14:
 			{
 				//DATUM FÖR METEOROLOGISK VINTER 
-				////////////////////////////////////////////////////////////////////////////////
 				int winterCount = 0;
-				bubbleSortDateLowToHigh(weatherOut, sizeOut);
-				for (int i = 0; i < sizeOut; i++)
+				bubbleSortDateLowToHigh(weatherOut);
+				for (int i = 0; i < weatherOut.size(); i++)
 				{
 					if (out.outDoorAverageTemp <= 0.0) {
 						winterCount++;
@@ -608,10 +279,10 @@ int main() {
 
 			case 15:
 			{
+				
 				//DATUM FÖR METEOROLOGISK HÖST MED SJUNKANDE VÄRDEN 
-				////////////////////////////////////////////////////////////////////////////////
 				int fallCount1 = 0;
-				for (int i = 0; i < sizeOut; i++)
+				for (int i = 0; i < weatherOut.size(); i++)
 				{
 					if (weatherOut[i].outDoorAverageTemp > 0.0 && weatherOut[i].outDoorAverageTemp < 10)
 					{
@@ -628,12 +299,11 @@ int main() {
 					}
 				}
 				if (fallCount1 == 0)cout << "Autumn arrived at August 1" << endl;
+				
 
-
-				//DATUM FÖR METEOROLOGISK HÖST UTAN SJUNKANDE VÄRDEN Kontrollera
-				////////////////////////////////////////////////////////////////////////////////
+				//DATUM FÖR METEOROLOGISK HÖST UTAN SJUNKANDE VÄRDEN 
 				int fallCount = 0;
-				for (int i = 0; i < sizeOut; i++)
+				for (int i = 0; i < weatherOut.size(); i++)
 				{
 					if (weatherOut[i].outDoorAverageTemp > 0 && weatherOut[i].outDoorAverageTemp < 10)
 					{
@@ -647,6 +317,20 @@ int main() {
 					else fallCount = 0;
 				}
 				if (fallCount == 0)cout << "Autumn arrived at August 1" << endl;
+				break;
+			}
+
+			//Beräkna om balkongdörren var öppen.
+			case 16:
+			{
+				cout << "Dates with open doors: "<< endl;
+				for (int i = 0; i < weatherOut.size(); i++)
+				{
+					if (weatherOut[i].balconyDoor == 'open') {
+						cout << weatherOut[i].date <<" "<<weatherOut[i].balconyDoor<< endl;
+					}
+				}
+			
 			}
 
 
@@ -655,8 +339,8 @@ int main() {
 			}
 
 			cout << endl;
-			cin.clear();
-
+			
+			
 		} while (true);
 
 
